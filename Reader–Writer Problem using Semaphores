@@ -1,0 +1,44 @@
+"""
+reader_writer.py
+Reader-Writer with writers-preference using semaphores.
+"""
+import threading
+import time, random
+
+rw_mutex = threading.Semaphore(1)   # allow readers+writers coordination
+mutex = threading.Lock()            # protect read_count
+read_count = 0
+data = 0
+
+def reader(id, loops=5):
+    global read_count
+    for _ in range(loops):
+        time.sleep(random())
+        with mutex:
+            global read_count
+            read_count += 1
+            if read_count == 1:
+                rw_mutex.acquire()
+        print(f"Reader {id} reads {data}")
+        with mutex:
+            read_count -= 1
+            if read_count == 0:
+                rw_mutex.release()
+
+def writer(id, loops=3):
+    global data
+    for _ in range(loops):
+        time.sleep(random()*2)
+        rw_mutex.acquire()
+        data += 1
+        print(f"Writer {id} wrote {data}")
+        rw_mutex.release()
+
+if __name__ == "__main__":
+    readers = [threading.Thread(target=reader, args=(i,)) for i in range(3)]
+    writers = [threading.Thread(target=writer, args=(i,)) for i in range(2)]
+    for w in writers: w.start()
+    for r in readers: r.start()
+    for w in writers: w.join()
+    for r in readers: r.join()
+    print("Done")

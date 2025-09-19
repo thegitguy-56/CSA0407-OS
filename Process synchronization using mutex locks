@@ -1,0 +1,23 @@
+"""
+mutex_sync.py
+Shows two threads incrementing a shared counter with a mutex (Lock).
+"""
+import threading
+
+counter = 0
+lock = threading.Lock()
+
+def worker(n):
+    global counter
+    for _ in range(n):
+        with lock:
+            tmp = counter
+            tmp += 1
+            counter = tmp
+
+if __name__ == "__main__":
+    t1 = threading.Thread(target=worker, args=(100000,))
+    t2 = threading.Thread(target=worker, args=(100000,))
+    t1.start(); t2.start()
+    t1.join(); t2.join()
+    print("Counter:", counter)  # should be 200000

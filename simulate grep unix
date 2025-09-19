@@ -1,0 +1,19 @@
+"""
+grep_sim.py
+Searches pattern in files (simple).
+"""
+import sys
+import re
+
+def grep(pattern, filename):
+    p = re.compile(pattern)
+    with open(filename) as f:
+        for i, line in enumerate(f, 1):
+            if p.search(line):
+                print(f"{filename}:{i}:{line.rstrip()}")
+
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print("usage: grep_sim.py pattern file")
+    else:
+        grep(sys.argv[1], sys.argv[2])

@@ -1,0 +1,21 @@
+"""
+disk_scan.py
+SCAN (elevator) algorithm simulation.
+"""
+def scan(requests, head, direction="up", disk_size=200):
+    left = sorted([r for r in requests if r < head])
+    right = sorted([r for r in requests if r >= head])
+    order = []
+    if direction == "up":
+        order = right + left[::-1]
+    else:
+        order = left[::-1] + right
+    moved = abs(head - order[0]) if order else 0
+    moved = sum(abs(order[i] - (head if i==0 else order[i-1])) for i in range(len(order)))
+    return order, moved
+
+if __name__ == "__main__":
+    reqs = [95, 180, 34, 119, 11, 123, 62, 64]
+    head = 50
+    ord_, m = scan(reqs, head, "up")
+    print("Order:", ord_, "Movement:", m)

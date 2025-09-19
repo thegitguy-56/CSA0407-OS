@@ -1,0 +1,15 @@
+"""
+disk_fcfs.py
+FCFS disk scheduling: given request queue and initial head position, compute order and total head movement.
+"""
+def fcfs(requests, head):
+    order = [head] + requests
+    moved = sum(abs(order[i] - order[i-1]) for i in range(1, len(order)))
+    return requests, moved
+
+if __name__ == "__main__":
+    reqs = [95, 180, 34, 119, 11, 123, 62, 64]
+    head = 50
+    order, moved = fcfs(reqs, head)
+    print("Service order:", order)
+    print("Total head movement:", moved)

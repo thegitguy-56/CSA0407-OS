@@ -1,0 +1,29 @@
+"""
+linked_alloc.py
+Linked allocation: each block contains next pointer (simulate with dict).
+"""
+TOTAL_BLOCKS = 20
+disk = {i: None for i in range(TOTAL_BLOCKS)}  # None or (filename, next_block)
+
+def allocate(filename, size):
+    free = [i for i, v in disk.items() if v is None]
+    if len(free) < size:
+        return None
+    used = free[:size]
+    for i in range(size):
+        nxt = used[i+1] if i+1 < size else -1
+        disk[used[i]] = (filename, nxt)
+    return used[0]  # pointer to first block
+
+def traverse(start):
+    cur = start
+    seq = []
+    while cur != -1 and cur is not None:
+        seq.append(cur)
+        cur = disk[cur][1]
+    return seq
+
+if __name__ == "__main__":
+    s = allocate("fileX", 4)
+    print("Start block:", s, "chain:", traverse(s))
+    print(disk)

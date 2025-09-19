@@ -1,0 +1,30 @@
+"""
+classical_sync.py
+Generic demonstration of process/thread synchronization using Events and Locks.
+"""
+import threading, time
+
+cond = threading.Condition()
+items = []
+
+def producer():
+    for i in range(5):
+        with cond:
+            items.append(i)
+            print("Produced", i)
+            cond.notify()
+        time.sleep(0.5)
+
+def consumer():
+    for _ in range(5):
+        with cond:
+            while not items:
+                cond.wait()
+            x = items.pop(0)
+            print("Consumed", x)
+
+if __name__ == "__main__":
+    t1 = threading.Thread(target=producer)
+    t2 = threading.Thread(target=consumer)
+    t2.start(); t1.start()
+    t1.join(); t2.join()

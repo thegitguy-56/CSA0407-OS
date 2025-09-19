@@ -1,0 +1,16 @@
+"""
+file_ops.py
+Simple file operations using Python built-ins.
+"""
+import os
+
+fname = "temp.txt"
+with open(fname, "w") as f:
+    f.write("Line1\nLine2\n")
+print("Read:")
+with open(fname) as f:
+    print(f.read())
+os.rename(fname, "renamed.txt")
+print("After rename:", os.path.exists("renamed.txt"))
+os.remove("renamed.txt")
+print("Deleted file")

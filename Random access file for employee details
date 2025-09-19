@@ -1,0 +1,37 @@
+"""
+random_access_employee.py
+Stores fixed-size employee records in a binary file and allows direct access.
+"""
+import struct, os
+
+RECORD_FMT = "20sI20s"  # name(20 bytes), id (uint), dept(20 bytes)
+RECORD_SIZE = struct.calcsize(RECORD_FMT)
+FNAME = "employees.dat"
+
+def pack_record(name, empid, dept):
+    return struct.pack(RECORD_FMT, name.encode()[:20].ljust(20, b'\x00'), empid, dept.encode()[:20].ljust(20, b'\x00'))
+
+def unpack_record(data):
+    name, empid, dept = struct.unpack(RECORD_FMT, data)
+    return name.decode().rstrip('\x00'), empid, dept.decode().rstrip('\x00')
+
+def write_record(index, name, empid, dept):
+    with open(FNAME, "r+b" if os.path.exists(FNAME) else "w+b") as f:
+        f.seek(index * RECORD_SIZE)
+        f.write(pack_record(name, empid, dept))
+
+def read_record(index):
+    with open(FNAME, "rb") as f:
+        f.seek(index * RECORD_SIZE)
+        data = f.read(RECORD_SIZE)
+        if not data or len(data) < RECORD_SIZE:
+            return None
+        return unpack_record(data)
+
+if __name__ == "__main__":
+    # write two records
+    write_record(0, "Alice", 101, "HR")
+    write_record(3, "Bob", 202, "CS")  # sparse write
+    print(read_record(0))
+    print(read_record(1))  # None / blank
+    print(read_record(3))

@@ -1,0 +1,28 @@
+"""
+indexed_alloc.py
+Simulates indexed file allocation using an index block per file.
+"""
+TOTAL_BLOCKS = 30
+disk = [None]*TOTAL_BLOCKS
+
+class FileIndex:
+    def __init__(self, name):
+        self.name = name
+        self.blocks = []
+
+def allocate_file(name, size):
+    free = [i for i, b in enumerate(disk) if b is None]
+    if len(free) < size+1:
+        return None
+    index_block = free[0]
+    disk[index_block] = f"index-{name}"
+    file = FileIndex(name)
+    for b in free[1:size+1]:
+        disk[b] = name
+        file.blocks.append(b)
+    return index_block, file
+
+if __name__ == "__main__":
+    idx, f = allocate_file("alpha", 4)
+    print("Index block:", idx, "blocks:", f.blocks)
+    print(disk)

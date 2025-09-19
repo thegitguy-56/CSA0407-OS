@@ -1,0 +1,15 @@
+"""
+unix_file_calls.py
+Demonstrates os.open, os.read, os.write, os.close similar to UNIX system calls.
+"""
+import os
+
+F = "unix_demo.txt"
+fd = os.open(F, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o644)
+os.write(fd, b"Hello from os.write\n")
+os.close(fd)
+
+fd = os.open(F, os.O_RDONLY)
+content = os.read(fd, 1024)
+os.close(fd)
+print("Read:", content.decode())

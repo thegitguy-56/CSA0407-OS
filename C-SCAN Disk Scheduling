@@ -1,0 +1,22 @@
+"""
+disk_cscan.py
+C-SCAN algorithm: head moves in one direction, jumps to other end.
+"""
+def cscan(requests, head, disk_size=200):
+    left = sorted([r for r in requests if r < head])
+    right = sorted([r for r in requests if r >= head])
+    # service right, then jump to start and service left
+    order = right + left
+    movement = 0
+    cur = head
+    for r in order:
+        movement += abs(r - cur)
+        cur = r
+    return order, movement
+
+if __name__ == "__main__":
+    reqs = [95, 180, 34, 119, 11, 123, 62, 64]
+    head = 50
+    ord_, mov = cscan(reqs, head)
+    print("Order:", ord_)
+    print("Total movement:", mov)

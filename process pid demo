@@ -1,0 +1,24 @@
+"""
+process_pid_demo.py
+Shows PID and PPID using os.fork (UNIX) or multiprocessing on Windows.
+"""
+import os, sys
+
+if hasattr(os, "fork"):
+    pid = os.fork()
+    if pid == 0:
+        # child
+        print("Child PID:", os.getpid(), "PPID:", os.getppid())
+        sys.exit(0)
+    else:
+        print("Parent PID:", os.getpid(), "Child PID:", pid)
+        os.wait()
+else:
+    # Windows: use multiprocessing
+    import multiprocessing, time
+    def child():
+        print("Child PID (multiproc):", os.getpid(), "PPID:", os.getppid())
+    p = multiprocessing.Process(target=child)
+    p.start()
+    print("Parent PID:", os.getpid(), "Child PID:", p.pid)
+    p.join()

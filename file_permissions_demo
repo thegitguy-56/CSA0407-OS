@@ -1,0 +1,25 @@
+"""
+file_permissions_demo.py
+Shows file permissions (rwx) and differentiates user/group/others using os.stat.
+"""
+import os, stat
+
+def describe(path):
+    st = os.stat(path)
+    mode = st.st_mode
+    perms = stat.filemode(mode)
+    uid = st.st_uid
+    gid = st.st_gid
+    print(f"{path}: {perms} uid:{uid} gid:{gid}")
+
+if __name__ == "__main__":
+    # create sample files with different perms (if running on Unix)
+    with open("permA.txt", "w") as f:
+        f.write("a")
+    os.chmod("permA.txt", 0o644)
+    with open("permB.txt", "w") as f:
+        f.write("b")
+    os.chmod("permB.txt", 0o750)
+    describe("permA.txt")
+    describe("permB.txt")
+    print("User types: owner (user), group, others. Use chmod to change perms.")

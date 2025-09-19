@@ -1,0 +1,23 @@
+"""
+unix_io_calls.py
+Uses fcntl (if available), os.lseek, os.stat, os.scandir to illustrate UNIX calls.
+"""
+import os
+import stat
+try:
+    import fcntl
+except Exception:
+    fcntl = None
+
+F = "unix_demo.txt"
+with open(F, "rb") as f:
+    print("Lseek -> pos 0:", f.seek(0))
+    st = os.fstat(f.fileno())
+    print("Size:", st.st_size)
+    if fcntl:
+        # Example: get flags
+        flags = fcntl.fcntl(f.fileno(), fcntl.F_GETFL)
+        print("Flags:", flags)
+print("Directory listing with scandir:")
+for entry in os.scandir("."):
+    print(entry.name, "dir" if entry.is_dir() else "file")
